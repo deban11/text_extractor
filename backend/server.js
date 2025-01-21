@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
@@ -22,43 +21,60 @@ const upload = multer({
 
 app.use(cors());
 
-// Endpoint to handle PDF upload and processing
+// Function to install spaCy model if not already installed
+function installSpacyModel() {
+    const pythonProcess = spawn('python', ['-m', 'spacy', 'download', 'en_core_web_lg']);
+    
+    pythonProcess.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+            console.error('Error installing spaCy model');
+        } else {
+            console.log('spaCy model installed successfully');
+        }
+    });
+}
+
+// Check if the spaCy model is installed by running the command (non-blocking)
+spawn('python', ['-c', 'import spacy; spacy.load("en_core_web_lg")'])
+    .on('error', (err) => {
+        console.log('spaCy model not found, installing...');
+        installSpacyModel();
+    });
+
 app.post('/extract', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    // Construct absolute path to the Python script by going up one level from backend
     const pythonScriptPath = path.join(__dirname, '..', 'model', 'extract.py');
 
-    // Check if Python script exists
     if (!fs.existsSync(pythonScriptPath)) {
         return res.status(500).json({ 
             error: `Python script not found at ${pythonScriptPath}` 
         });
     }
 
-    // Spawn Python process with correct script path
-    const pythonProcess = spawn('python', [
-        pythonScriptPath,
-        req.file.path
-    ]);
+    const pythonProcess = spawn('python', [pythonScriptPath, req.file.path]);
 
     let dataString = '';
 
-    // Collect data from Python script
     pythonProcess.stdout.on('data', (data) => {
         dataString += data.toString();
     });
 
-    // Handle errors
     pythonProcess.stderr.on('data', (data) => {
         console.error(`Python Error: ${data}`);
     });
 
-    // When Python process completes
     pythonProcess.on('close', (code) => {
-        // Clean up uploaded file
         fs.unlink(req.file.path, (err) => {
             if (err) console.error('Error deleting file:', err);
         });
@@ -79,7 +95,6 @@ app.post('/extract', upload.single('file'), (req, res) => {
     });
 });
 
-// Error handling middleware
 app.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {
         return res.status(400).json({ error: 'File upload error' });
@@ -90,14 +105,7 @@ app.use((error, req, res, next) => {
     next(error);
 });
 
-// Create uploads directory if it doesn't exist
-// const uploadsDir = path.join(__dirname, 'uploads');
-// if (!fs.existsSync(uploadsDir)){
-//     fs.mkdirSync(uploadsDir);
-// }
-
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    //console.log(`Python script path: ${path.join(__dirname, '..', 'model', 'extract.py')}`);
 });
