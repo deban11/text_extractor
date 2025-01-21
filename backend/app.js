@@ -91,13 +91,13 @@ app.use((error, req, res, next) => {
 });
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)){
-    fs.mkdirSync(uploadsDir);
-}
+// const uploadsDir = path.join(__dirname, 'uploads');
+// if (!fs.existsSync(uploadsDir)){
+//     fs.mkdirSync(uploadsDir);
+// }
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Python script path: ${path.join(__dirname, '..', 'model', 'extract.py')}`);
+    //console.log(`Python script path: ${path.join(__dirname, '..', 'model', 'extract.py')}`);
 });
