@@ -114,7 +114,7 @@ const App = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('https://text-extractor-13.onrender.com/extract', {
+      const response = await fetch('http://localhost:3006/extract', {
         method: 'POST',
         body: formData,
       });
