@@ -26,7 +26,11 @@ const upload = multer({
     }
 });
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://jazzy-valkyrie-d0d249.netlify.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Function to install spaCy model if not already installed
 function installSpacyModel() {
