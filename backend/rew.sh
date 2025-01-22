@@ -50,8 +50,9 @@ install_python_dependencies() {
 
 # Function to download spaCy model
 install_spacy_model() {
-  log "Installing spaCy model..."
-  python3 -m spacy download en_core_web_sm || { log "Failed to download spaCy model."; exit 1; }
+  log "Installing spaCy models..."
+  python3 -m spacy download en_core_web_sm || { log "Failed to download small spaCy model."; exit 1; }
+  python3 -m spacy download en_core_web_lg || { log "Failed to download large spaCy model."; exit 1; }
 }
 
 # Main script execution
