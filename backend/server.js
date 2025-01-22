@@ -7,9 +7,16 @@ const fs = require('fs');
 
 const app = express();
 
-// Configure multer to store uploaded files in uploads directory
+// Ensure the uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+    console.log(`Created uploads directory at ${uploadDir}`);
+}
+
+// Configure multer to store uploaded files in the uploads directory
 const upload = multer({ 
-    dest: 'uploads/',
+    dest: uploadDir,
     fileFilter: (req, file, cb) => {
         if (file.mimetype === 'application/pdf') {
             cb(null, true);
@@ -95,6 +102,7 @@ app.post('/extract', upload.single('file'), (req, res) => {
     });
 });
 
+// Global error handler
 app.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {
         return res.status(400).json({ error: 'File upload error' });
@@ -105,7 +113,8 @@ app.use((error, req, res, next) => {
     next(error);
 });
 
-const PORT = process.env.PORT || 3001;
+// Start the server
+const PORT = process.env.PORT || 3006;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

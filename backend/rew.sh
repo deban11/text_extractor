@@ -26,16 +26,16 @@ install_python() {
 
 install_npm_packages() {
   log "Installing Node.js dependencies..."
-  npm install cors multer
+  npm install cors multer express
   npm install
 }
 
 install_python_dependencies() {
+  log "Installing Python dependencies..."
+  pip3 install spacy pdfplumber
   if [ -f requirements.txt ]; then
-    log "Installing Python dependencies from requirements.txt..."
+    log "Installing additional dependencies from requirements.txt..."
     pip3 install -r requirements.txt || { log "Failed to install Python dependencies."; exit 1; }
-  else
-    log "requirements.txt not found. Skipping Python dependencies."
   fi
 }
 
@@ -45,10 +45,17 @@ install_spacy_model() {
   python3 -m spacy download en_core_web_lg || { log "Failed to download large spaCy model."; exit 1; }
 }
 
+create_directories() {
+  log "Creating required directories..."
+  mkdir -p uploads
+  chmod 755 uploads
+}
+
 log "Starting dependency installation..."
 install_node
 install_python
 install_npm_packages
 install_python_dependencies
 install_spacy_model
+create_directories
 log "All dependencies installed successfully!"
