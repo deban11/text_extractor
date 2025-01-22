@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Function to log messages
 log() {
   echo "[INFO] $1"
 }
 
-# Function to check and install Node.js and npm
 install_node() {
   if ! command -v node &>/dev/null; then
     log "Node.js is not installed. Installing..."
@@ -16,7 +14,6 @@ install_node() {
   fi
 }
 
-# Function to check and install Python and pip
 install_python() {
   if ! command -v python3 &>/dev/null; then
     log "Python3 is not installed. Installing..."
@@ -27,18 +24,12 @@ install_python() {
   fi
 }
 
-# Function to check and install npm packages
 install_npm_packages() {
   log "Installing Node.js dependencies..."
-  
-  # Explicitly install cors and multer
   npm install cors multer
-  
-  # Install all dependencies listed in package.json
   npm install
 }
 
-# Function to check and install Python dependencies
 install_python_dependencies() {
   if [ -f requirements.txt ]; then
     log "Installing Python dependencies from requirements.txt..."
@@ -48,25 +39,16 @@ install_python_dependencies() {
   fi
 }
 
-# Function to download spaCy model
 install_spacy_model() {
   log "Installing spaCy models..."
   python3 -m spacy download en_core_web_sm || { log "Failed to download small spaCy model."; exit 1; }
   python3 -m spacy download en_core_web_lg || { log "Failed to download large spaCy model."; exit 1; }
 }
 
-# Main script execution
 log "Starting dependency installation..."
-
-# Install Node.js, npm, Python, and pip
 install_node
 install_python
-
-# Install project-specific dependencies
 install_npm_packages
 install_python_dependencies
-
-# Install spaCy model
 install_spacy_model
-
 log "All dependencies installed successfully!"
