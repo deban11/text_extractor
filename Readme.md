@@ -14,6 +14,9 @@ This full-stack project allows users to upload a PDF file, extract data such as 
 ---
 
 ## Prerequisites
+you can run the command to install all dependencies:
+cd backend
+./rew.sh
 
 Ensure the following tools and dependencies are installed:
 
@@ -44,7 +47,7 @@ npm run start
 
 ###start the frontend:
 
-cd fron/my-react-app
+cd frontend
 npm run start
 
 the webpage will load on localhost:3000,

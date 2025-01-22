@@ -34,7 +34,7 @@ app.use(cors({
 
 // Function to install spaCy model if not already installed
 function installSpacyModel() {
-    const pythonProcess = spawn('python', ['-m', 'spacy', 'download', 'en_core_web_lg']);
+    const pythonProcess = spawn('python3', ['-m', 'spacy', 'download', 'en_core_web_lg']);
     
     pythonProcess.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
@@ -54,7 +54,7 @@ function installSpacyModel() {
 }
 
 // Check if the spaCy model is installed by running the command (non-blocking)
-spawn('python', ['-c', 'import spacy; spacy.load("en_core_web_lg")'])
+spawn('python3', ['-c', 'import spacy; spacy.load("en_core_web_lg")'])
     .on('error', (err) => {
         console.log('spaCy model not found, installing...');
         installSpacyModel();
